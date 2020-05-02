@@ -1,65 +1,49 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <bits/stdc++.h>
 
-int cmpfunc (const void * a, const void * b) {
-   return ( *(int*)a - *(int*)b );
-}
-
-void qsort(void *base, size_t nitems, size_t size, int (*compar)(const void *, const void*));
+using namespace std;
 
 int main(){
-    
-    
- 
-    
-    int n,m;
-    scanf("%d %d",&n,&m);
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+	
+	int n,m;
+	while(cin >> n >> m){
+		if (n==0 and m==0) break;
+		
+		vector<int> heads(n), knights(m);
+		for(auto &x: heads) cin >> x;
+		for(auto &x: knights) cin >> x;
+		
+		sort(knights.begin(), knights.end());
+		sort(heads.begin(), heads.end());
 
-    do
-    {        
-        int h[n];
-        int k[m];
-        for (int i=0; i<n; i++)
-            scanf("%d",&h[i]);
-        for (int i=0; i<m; i++)
-            scanf("%d",&k[i]);
-        
-        /*
-        for (int i=0; i<n; i++)
-            printf("%d\n",h[i]);
-        for (int i=0; i<m; i++)
-            printf("%d\n",k[i]);
-        */
-        
-        qsort(h, n, sizeof(int), cmpfunc);
-        qsort(k, m, sizeof(int), cmpfunc);
-            
-        int cost=0;
-        int flag=0;
-        for (int i=0; i<n; i++){
-            
-            int j;
-            for (j=0; j<m; j++)
-                if (k[j]>=h[i]) break;
-            
-            if (j==m){ //non ci sono soldati abbastanza alti
-                flag=1;
-                break;
-            }
-            
-            cost+=k[j];
-            k[j]=0;
-            h[i]=0;
-        }
-        
-        
-        if (!flag)
-            printf("%d\n",cost);
-        else
-            printf("Loowater is doomed!\n");
-        
-        scanf("%d %d",&n,&m);
-    }while(n!=0 && m!=0);
-    
-    return 0;
+		bool doomed = false;
+		int ans = 0;
+		for(int i=0; i<heads.size(); i++){
+			if (knights.size() == 0){ //no more knights 
+				cout << "Loowater is doomed!\n";
+				doomed = true;
+				break;
+			}
+
+			// trick here on lower bound: first elem !< so = or >
+			auto it = lower_bound(knights.begin(), knights.end(), heads[i]); 
+			if (it == knights.end()){ //doesnt find a knight
+				cout << "Loowater is doomed!\n";
+				doomed = true;
+				break;
+			}
+			
+			ans += *it;
+
+			knights.erase(it);
+		}
+
+		if (!doomed){
+			cout << ans << endl;
+		}
+		
+	}
+
+	return 0;
 }
