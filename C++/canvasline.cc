@@ -13,10 +13,11 @@ int main() {
 	
 	int n;
 	cin >> n;
-
+	
 	vector<long> in(n), end(n);
 	vector<int> peg(n);
 	for(int i=0; i<n; i++) peg[i]=0;
+	
 
 	long l,r;
 	for(int i=0; i<n; i++){

@@ -1,4 +1,6 @@
+#include <algorithm>
 #include <bits/stdc++.h>
+#include <vector>
 
 using namespace std;
 
@@ -10,7 +12,7 @@ void floodfill(int i, int j, int value, int mark) {
     if (i+1 < r  && m[i+1][j] == value) floodfill(i+1, j, value, mark);
     if (i-1 >= 0 && m[i-1][j] == value) floodfill(i-1, j, value, mark);
     if (j+1 < c  && m[i][j+1] == value) floodfill(i, j+1, value, mark);
-    if(j-1 >= 0 && m[i][j-1] == value) floodfill(i, j-1, value, mark);
+    if (j-1 >= 0 && m[i][j-1] == value) floodfill(i, j-1, value, mark);
 	
 	return;
 }
@@ -21,11 +23,10 @@ int main() {
 		
     for (int i = 0; i < r; i++) {
 		int j = 0;
-
+            
 		string s;
 		cin >> s;
-	
-		vector<int> a;
+
 		
 		for(char c: s) m[i][j++] = c-'0';
 	}
@@ -35,7 +36,8 @@ int main() {
 	// hoshen-kopelman
 	int odd=3, even=2;
 	for(int i=0; i<r; i++){
-		for(int j=0; j<c; j++){
+
+			for(int j=0; j<c; j++){
 			if (m[i][j] == 0){
 				floodfill(i, j, 0, even);
 				even+=2;

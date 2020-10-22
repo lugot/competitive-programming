@@ -19,5 +19,8 @@ int main() {
 		cout << S << "ex" << P;
 	printf("\n");
 
+	cout << "ciao";
+
+
 	return 0;
 }

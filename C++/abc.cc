@@ -13,9 +13,6 @@ int main() {
 	if (A>C) swap(A,C);
 	if (B>C) swap(B,C);
 	
-	vector<int> c;
-	if (c.size() == 2){cout<<"ciao";}
-	
 
 	string s;
 	cin >> s;

@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <vector>
 
 using namespace std;
 
@@ -12,6 +13,7 @@ int main() {
 	string s;
 	for (int i=0; i<x; i++) {
 		cin >> s >> group_size;
+
 
 		if (!s.compare("enter")) {
 			if (act_capacity + group_size > L) n++;

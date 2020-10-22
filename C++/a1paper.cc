@@ -1,4 +1,5 @@
 #include <bits/stdc++.h>
+#include <vector>
 
 using namespace std;
 
@@ -13,6 +14,7 @@ int main(){
     for(int i=2; i<=32; i++) side[i] = side[i-2]/2;
     
     //for(int i=0; i<32; i++) cout << "i:" << i << " " << side[i] << endl;
+    stri
 
     int n;
     cin >> n;
@@ -38,6 +40,8 @@ int main(){
             return 0;
         }
     }
+
+
 
     cout << "impossible\n";
 
