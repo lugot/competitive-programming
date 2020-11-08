@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 
 using namespace std;
-
-const int INF = 1e9 + 0.0;
+const double INF = DBL_MAX/2.0;
+typedef pair<long double, int> di;
 
 int main(){
 	ios::sync_with_stdio(0);
@@ -10,59 +10,49 @@ int main(){
 
 	int n, m;
 	while(cin >> n >> m){
-		if (n == 0) break;
+		if (n==0) break;
 
-		vector<vector<pair<int, float>>> adj(n);
+		vector<vector<pair<int, double>>> adj(n);
 
+		int x, y;
+		double f;
 		while(m--){
-			int x, y;
-			float f;
 			cin >> x >> y >> f;
 
 			adj[x].push_back({y, f});
 			adj[y].push_back({x, f});
 		}
 
-		vector<float> distance(n);
-		for(auto &x: distance) x = 1000000.0;
-		distance[0] = 0.0;
-		vector<int> parent(n, 0);
+		vector<double> dist(n, 0);
+		dist[0] = 1;
+		vector<bool> visited(n, false);
+		visited[0] = true;
 
-		priority_queue<pair<float, int>, vector<pair<float, int>>> q;
-		q.push({0.0, 0});
+		priority_queue<di, vector<di>> pq;
+		pq.push({1.0, 0});
 
-		while(!q.empty()){
-			auto x = q.top(); q.pop();
-			float d = -x.first;
-			int u = x.second;
-			cout << "u: " <<  u << d << endl;
-			if (d > distance[u]) continue;
+		// lol non funzionera mai
+		while(!pq.empty()){
+			double d = pq.top().first;
+			int u = pq.top().second;
+			pq.pop();
 
-			cout << "here: " << endl;
-			for(auto y: adj[u]){
-				int v = y.first;
-				float w = y.second; 
-				cout << "v: " << v << ",w: " << w << endl;
+			//if (visited[u]) contine;
+			//visited[u] = true;
+			if (d > dist[u]) continue;
 
-				if (distance[u] + w < distance[v]){
-				cout << "v: " << v << ",w: " << w << endl;
-					distance[v] = distance[u] + w;
-					parent[v] = u;
-					q.push({-distance[v], v});
+			for(auto [v, f]: adj[u]){
+				if (dist[u]*f > dist[v]){
+					 dist[v] = dist[u]*f;
+					 pq.push({dist[v], v});
 				}
 			}
 		}
 
-
-		for(auto x: parent) cout << x << " ";
-		int act = n-1;
-		while(act != 0){
-			cout << parent[act] << " ";
-			act = parent[act];
-		}
-		cout << endl;
+		cout << fixed;
+		cout.precision(4);
+		cout << dist[n-1] << endl;
 	}
 
 	return 0;
 }
-

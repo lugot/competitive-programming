@@ -3,7 +3,7 @@ N = int(input())
 
 d = {}
 revd = {}
-pizze = {'pizza_base': [0, 0]}
+pizze = {}
 base = {}
 visited = {}
 topo = []
@@ -22,15 +22,6 @@ for _ in range(N):
     visited[p1] = 0
     visited[p2] = 0
 
-    # if p1 in pizze:
-        # if pizze[p1][0] > price:
-            # pizze[p1] = [price, prestige]
-        # elif pizze[p1][0] == price:
-            # if pizze[p1][1] < prestige:
-                # pizze[p1] = [price, prestige]
-    # else:
-        # pizze[p1] = [price, prestige]
-
     if p2 not in d:
         d[p2] = []
     d[p2].append(p1)
@@ -42,12 +33,6 @@ for _ in range(N):
     revd[p1].append([p2, (price, prestige)])
 
 base = [k for k, v in base.items() if v == 1]
-
-# print(pizze)
-# print("DAG:", d, '\n')
-# print("RDAG:", revd, '\n')
-# print("BASE:", base)
-# print(visited)
 
 
 def toposort(node):
@@ -61,13 +46,14 @@ def toposort(node):
 for node in base:
     toposort(node)
 topo = topo[::-1]
-# print(topo, '\n')
+# print(topo)
+i = 0
+while(topo[i] in base):
+    pizze[topo[i]] = [0, 0]
+    i += 1
+# print(topo[i:])
 
-# print(revd['pizza_tomato'][0][0])
-# print(revd['pizza_tomato'][0][1][0])
-# print(revd['pizza_tomato'][0][1][1])
-
-for u in topo[1:]:
+for u in topo[i:]:
     # la prossima volta faccio una struct, non si capisce nulla
     nome_pizza = revd[u][0][0]
     price = revd[u][0][1][0]
