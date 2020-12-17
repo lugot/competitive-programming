@@ -42,7 +42,7 @@ double dist(point& a, point& b){
 }
 void rotate(point a, double theta, point &r){
 	r = point(a.x*cos(theta) - a.y*sin(theta),
-			a.x*sin(theta) + a.y*cos(theta));
+			a.x*sin(theta) - a.y*cos(theta));
 }
 ostream& operator<<(ostream& os, point &p){ 
 	os << "(" << p.x << "," << p.y << ")";
@@ -59,39 +59,64 @@ int main(){
 	ios::sync_with_stdio(0);
 	cin.tie(0);
 
-	int t;
-	cin >> t;
+	int n;
+	double t;
+	cin >> n >> t;
 
-	while(t--){
-		int n;
-		cin >> n;
+	vector<point> act;
+	vector<int> ti;
+	int x, y, z;
+	for(int i=0; i<n; i++){
+		cin >> x >> y >> z;
+		act.push_back(point(x,y));
+		ti.push_back(z);
+	}
 
-		point pos(0,0);
-		point dir(1,0);
 
-		string cmd;
-		int x;
-		while(n--){
-			cin >> cmd >> x;
+	vector<point> vec;
+	for(int i=1; i<n; i++){
+		vec.push_back(act[i] - act[i-1]);
+	}
 
-			if (cmd == "bk"){
-				x = -x;
-				cmd = "fd";
-			}
-			if (cmd == "rt"){
-				x = 360 - x;
-				cmd = "lt";
-			}
 
-			if (cmd == "lt") rotate(dir, DEG2RAD(x), dir);
-			if (cmd == "fd") pos = pos + dir*x;
+	vector<point> gps;
+	gps.push_back(act[0]);
 
-			//cout << pos << " " << dir << endl;
+	double act_time = t,
+		end_time = ti[ti.size()-1];
+	while(act_time < end_time){
+		int i=0;
+		while(i < n-1 and act_time > ti[i+1]) i++;
+
+		if (act_time == ti[i]){
+			gps.push_back(act[i]);
+			act_time += t;
+			continue;
 		}
 
-		point init(0,0);
-		cout << (int)round(dist(pos, init)) << endl;
+		double timediff = (act_time - ti[i])/(ti[i+1] - ti[i]);
+		point endpt = act[i] + vec[i]*timediff;
+		act_time += t;
+
+		//cout << i << " " << timediff << endl;
+
+		gps.push_back(endpt);
 	}
+	gps.push_back(act[act.size()-1]);
+
+	double act_path_lenght = 0.0;
+	for(int i=1; i<act.size(); i++) act_path_lenght += dist(act[i], act[i-1]);
+
+	double gps_path_length = 0.0;
+	for(int i=1; i<gps.size(); i++) gps_path_length += dist(gps[i], gps[i-1]);
+
+
+	//cout << act_path_lenght << " " << gps_path_length << endl;
+	//show(gps);
+	
+	cout << fixed << setprecision(6) 
+		<< 100*(1- gps_path_length/act_path_lenght) << endl;
+
 
 	return 0;
 }

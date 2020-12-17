@@ -145,6 +145,18 @@ double dist_to_segment(point a, point p1, point p2, point &r) {
     return dist_to_line(a, p1, p2, r);
 }
 
+bool circle_ptsrad(point p1, point p2, double r, point &c) {
+    // to get the other center, reverse p1 and p2
+    double d2 = (p1.x-p2.x) * (p1.x-p2.x) + (p1.y-p2.y) * (p1.y-p2.y);
+    double det = r*r / d2 - 0.25;
+    if (det < 0.0) return false;
+
+    double h = sqrt(det);
+    c.x = (p1.x+p2.x) * 0.5 + (p1.y-p2.y) * h;
+    c.y = (p1.y+p2.y) * 0.5 + (p2.x-p1.x) * h;
+    return true;
+}
+
 double perimeter(vector<point>& v) {
     int n = v.size();
 
@@ -178,7 +190,6 @@ bool is_convex(vector<point> &v) {
 int is_inside(point p, vector<point> &v) {
     int n = v.size();
 
-    
     bool on_polygon = false;
     for (int i=0; i<n-1; i++) {
         if (fabs(dist(p, v[i]) + dist(p, v[i+1]) - dist(v[i], v[i+1])) < EPS)
@@ -216,21 +227,26 @@ int main(){
 	ios::sync_with_stdio(0);
 	cin.tie(0);
 
-    int C;
-    cin >> C;
+    int n;
+    while (cin >> n) {
+        if (n == 0) break;
 
-    vector<point> pointset(C);
-    for(point& p: pointset) cin >> p.x >> p.y;
+        vector<point> poly(n);
+        for (point& p: poly) cin >> p.x >> p.y;
+        poly.push_back(poly[0]);
 
-    vector<point> convhull = chull(pointset);
-    int n = convhull.size()-1;
+        int m;
+        cin >> m;
+        while (m--) {
+            point p;
+            cin >> p.x >> p.y;
 
-    double max_dist = 0.0;
-    for (point p: convhull) for (point v: convhull)
-        max_dist = max(max_dist, dist(p,v));
+            if (is_inside(p, poly) ==  1) cout << "in" << endl;
+            if (is_inside(p, poly) ==  0) cout << "on" << endl;
+            if (is_inside(p, poly) == -1) cout << "out" << endl;
+        }
 
-    cout << fixed << setprecision(9) << max_dist << endl;
-
+    }
 
 	return 0;
 }

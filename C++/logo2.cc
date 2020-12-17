@@ -69,10 +69,21 @@ int main(){
 		point pos(0,0);
 		point dir(1,0);
 
-		string cmd;
-		int x;
+		string cmd, val;
+		//int x;
+		vector<point> vectors;
+		string missing;
+		int breakpt;
 		while(n--){
-			cin >> cmd >> x;
+			cin >> cmd >> val;
+			if (val[0] == '?'){
+				missing  = cmd;
+				if (cmd == "lt" or cmd == "rt"){
+					breakpt = vectors.size();
+				}
+				continue;
+			}
+			int x = stoi(val);
 
 			if (cmd == "bk"){
 				x = -x;
@@ -84,13 +95,27 @@ int main(){
 			}
 
 			if (cmd == "lt") rotate(dir, DEG2RAD(x), dir);
-			if (cmd == "fd") pos = pos + dir*x;
+			if (cmd == "fd") vectors.push_back(dir*x); //pos = pos + dir*x;
 
 			//cout << pos << " " << dir << endl;
 		}
+		for(point v: vectors) cout << v << " ";
+		cout << endl;
 
-		point init(0,0);
-		cout << (int)round(dist(pos, init)) << endl;
+		if (missing == "fd" or missing == "bk"){
+			point missing_v = point();
+			for(point v: vectors) missing_v = missing_v + v;
+
+			cout << (int) round(missing_v.length()) << endl;
+			//if (missing == "fd") cout << (int) round(missing_v.length()) << endl;
+			//if (missing == "bk") cout << (int) round(missing_v.length()) << endl;
+
+			cout << missing_v << endl;
+		}
+		else{
+
+		}
+
 	}
 
 	return 0;

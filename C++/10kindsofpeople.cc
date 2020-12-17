@@ -31,6 +31,7 @@ int main() {
 		for(char c: s) m[i][j++] = c-'0';
 	}
 
+
 	//si poteva usare anche unionfind per le queries, il principio è lo stesso
 	// e probabilmente era anche più veloce, altrimenti l'algoritmo
 	// hoshen-kopelman
@@ -51,7 +52,8 @@ int main() {
 		
 	int n;
 	cin >> n;
-	
+
+    
 	while(n--){
 		int r1,c1,r2,c2;
 		cin >> r1 >> c1 >> r2 >> c2;
