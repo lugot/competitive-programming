@@ -11,19 +11,15 @@ struct union_find {
         size_of_set.assign(N, 1);
         num_sets = N;
     }
-
     int find_set(int i) {
         return (p[i] == i) ? i : (p[i] = find_set(p[i])); 
     }
-
     bool same_set(int i, int j) {
         return find_set(i) == find_set(j);
     }
-
     int set_size(int i) {
         return size_of_set[find_set(i)];
     }
-
     void union_set(int i, int j) {
         if (!same_set(i, j)){ 
             int x = find_set(i), y = find_set(j);
@@ -34,34 +30,48 @@ struct union_find {
             num_sets--;
     }} 
 };
- 
 
-struct edge {
-    int w, u, v;
-};
+typedef long long wtype; // change weighttype
 
-vector<edge> edgelist;
-int E;
-for (int i=0; i<E; i++) {
-    scanf("%d %d %d", &u, &v, &w);
-    // read the triple: (u, v, w)
-    EdgeList.push_back(make_pair(w, ii(u, v))); 
-}
-sort(edgelist.begin(), edgelist.end());
+typedef tuple<wtype, int, int> edge;
+typedef vector<edge> edgelist;
 
-int mst_cost = 0;
-union_find uf(E);
+int n, m;  
+edgelist elist;
 
-for (int i=0; i<E; i++) {
-     // for each edge, O(E)
-    pair<int, ii> front = EdgeList[i];
-    if (!UF.isSameSet(front.second.first, front.second.second)) { // check
-        mst_cost += front.first;
-         // add the weight of e to MST
-        UF.unionSet(front.second.first, front.second.second);
-         // link them
+// KRUSKAL, O(mlogm)
+union_find uf(0);
+wtype kruskal() {
+    wtype ans = 0;
+
+    sort(elist.begin(), elist.end());
+    uf = union_find(n);
+
+    for (int i=0; i<m; i++) {
+        auto [w, u, v] = elist[i];
+
+        if (uf.same_set(u, v)) continue;
+
+		ans = w;
+        uf.union_set(u, v);
     }
+
+	if (uf.num_sets != 1) ans = 0;
+
+    return ans;
 }
-// note: the runtime cost of UFDS is very light
-// note: the number of disjoint sets must eventually be 1 for a valid MST
-printf("MST cost = %d (Kruskal’s)\n", mst_cost);
+
+int main() {
+
+	cin >> n >> m;
+	elist = edgelist(m);
+	for (auto& [w, a, b]: elist) cin >> a >> b >> w;
+
+	wtype ans = kruskal();
+
+	if (ans == 0) cout << "IMPOSSIBLE" << endl;
+	else		  cout << ans << endl;
+
+
+    return 0;
+}

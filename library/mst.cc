@@ -31,7 +31,7 @@ struct union_find {
     }} 
 };
 
-typedef int wtype; // change weighttype
+typedef double wtype; // change weighttype
 
 typedef tuple<wtype, int, int> edge;
 typedef vector<edge> edgelist;
@@ -48,14 +48,14 @@ adjlist alist;
 
 // KRUSKAL, O(mlogm)
 union_find uf(0);
+
 wtype kruskal() {
     wtype mst_cost = 0;
 
     sort(elist.begin(), elist.end());
     uf = union_find(n);
 
-    for (int i=0; i<m; i++) {
-        auto [w, u, v] = elist[i];
+    for (auto [w, u, v]: elist) {
 
         if (uf.same_set(u, v)) continue;
 
@@ -71,11 +71,6 @@ vi taken;
 priority_queue<wi, vector<wi>, greater<wi>> pq;
 
 void process(int x) {
-    taken[x] = 1;
-    for (auto [u, w]: alist[x]) {
-        if (taken[u]) continue; 
-        pq.push({w, u});
-    } 
 }
 wtype prim() { // O(mlogm)
     wtype mst_cost = 0;
@@ -85,7 +80,7 @@ wtype prim() { // O(mlogm)
 
     process(0);
 
-    while (!pq.empty()) { 
+    while (!pq.empty() and num_taken < n) { 
         auto [w, u] = pq.top(); pq.pop();
 
         if (taken[u]) continue;
@@ -94,43 +89,12 @@ wtype prim() { // O(mlogm)
         process(u);
 
         num_taken++;
-        if (num_taken == n-1) break;
     }
 
     return mst_cost;
 }
 
 int main() {
-
-    int T;
-    cin >> T;
-
-    while (T--) {
-        int M, C;
-        cin >> M >> C;
-    
-        alist = adjlist(C);
-        n = C;
-        m = C*(C-1)/2;
-
-        int comb = C*(C-1)/2;
-        while (comb--) {
-            int i, j, D;
-            cin >> i >> j >> D;
-
-            alist[i].push_back({j, D});
-            alist[j].push_back({i, D});
-            elist.push_back({D, i, j});
-        }
-
-        //if (kruskal() + C <= M) cout << "yes" << endl;
-        //else                cout << "no" << endl;
-        if (prim() + C <= M) cout << "yes" << endl;
-        else             cout << "no" << endl;
-    }
-    
-
-
 
     return 0;
 }

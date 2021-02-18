@@ -31,7 +31,7 @@ struct union_find {
     }} 
 };
 
-typedef int wtype; // change weighttype
+typedef double wtype; // change weighttype
 
 typedef tuple<wtype, int, int> edge;
 typedef vector<edge> edgelist;
@@ -54,8 +54,7 @@ wtype kruskal() {
     sort(elist.begin(), elist.end());
     uf = union_find(n);
 
-    for (int i=0; i<m; i++) {
-        auto [w, u, v] = elist[i];
+    for (auto [w, u, v]: elist) {
 
         if (uf.same_set(u, v)) continue;
 
@@ -85,7 +84,7 @@ wtype prim() { // O(mlogm)
 
     process(0);
 
-    while (!pq.empty()) { 
+    while (!pq.empty() and num_taken < n) { 
         auto [w, u] = pq.top(); pq.pop();
 
         if (taken[u]) continue;
@@ -94,42 +93,41 @@ wtype prim() { // O(mlogm)
         process(u);
 
         num_taken++;
-        if (num_taken == n-1) break;
     }
 
     return mst_cost;
 }
 
+double l2(pair<double, double> i1, pair<double, double> i2) {
+	auto [x1, y1] = i1;
+	auto [x2, y2] = i2;
+
+	return hypot(x1-x2, y1-y2);
+}
 int main() {
 
-    int T;
-    cin >> T;
+	int t;
+	cin >> t;
 
-    while (T--) {
-        int M, C;
-        cin >> M >> C;
-    
-        alist = adjlist(C);
-        n = C;
-        m = C*(C-1)/2;
+	while (t--) {
+		cin >> n;
 
-        int comb = C*(C-1)/2;
-        while (comb--) {
-            int i, j, D;
-            cin >> i >> j >> D;
+		vector<pair<double, double>> islands(n);
+		for (auto& [x, y]: islands) cin >> x >> y;
 
-            alist[i].push_back({j, D});
-            alist[j].push_back({i, D});
-            elist.push_back({D, i, j});
-        }
+		alist = adjlist(n);
+        elist = edgelist(0);
+		for (int i=0; i<n; i++) for (int j=i+1; j<n; j++) {
+			wtype dist = l2(islands[i], islands[j]);
 
-        //if (kruskal() + C <= M) cout << "yes" << endl;
-        //else                cout << "no" << endl;
-        if (prim() + C <= M) cout << "yes" << endl;
-        else             cout << "no" << endl;
-    }
-    
+			alist[i].push_back({j, dist});
+			alist[j].push_back({i, dist});
+			elist.push_back({dist, i, j});
+		}
 
+		//cout << fixed << setprecision(4) << kruskal() << endl;
+        cout << fixed << setprecision(4) << prim() << endl;
+	}
 
 
     return 0;
