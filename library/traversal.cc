@@ -45,20 +45,20 @@ void dfs(int x) {
 bool cycle;
 vi ts;
 
-void toposort_cycledetection(int x) {
-    if (cycle) return;
+bool toposort_cycledetection(int x) {
+    if (cycle) return true;
     visited[x] = 1;
 
     for (auto [u, w] : alist[x]) {
         if (visited[u] == 0) toposort_cycledetection(u);
         if (visited[u] == 1) {
             cycle = true;
-            return;
+            return true;
         }
     }
     ts.push_back(x);
     visited[x] = 2;
-    return;
+    return false;
     /*
      *in main:
      *reverse(ts.begin(), ts.end());
@@ -90,7 +90,6 @@ void toposorting_khan() {
 
         visited[u] = 1;
         ts.push_back(u);
-
         q.push(u);
     }
     

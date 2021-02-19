@@ -1,0 +1,95 @@
+#include <bits/stdc++.h>
+
+using namespace std;
+
+typedef int wtype; 
+
+typedef pair<int, wtype> iw;
+typedef pair<wtype, int> wi;
+typedef vector<iw> viw;
+typedef vector<int> vi;
+typedef vector<viw> adjlist;
+
+typedef tuple<wtype, int, int, int> wiii;
+
+int n, m;  
+adjlist alist;
+vi visited;
+vi parent;
+vi restack;
+vi dist;
+vi prices;
+int INF = 1e9;
+
+int c, s, e;
+void dijkstra() {
+
+    dist = vi(n, INF);
+    parent = vi(n, -1);
+
+    priority_queue<wiii, vector<wiii>, greater<wiii>> pq;
+    pq.push({0, s, INF, 0});
+    dist[s] = 0;
+    parent[s] = s;
+
+    while (!pq.empty()) {
+        auto [d, u, price, residue] = pq.top(); pq.pop();
+
+        cout << d << " " << u << " " << price << " " << residue << endl;
+        if (d > dist[u]) continue;
+
+        for (auto [v, w]: alist[u]) {
+
+            wtype added_dist;
+            if (residue == 0) price = INF;
+            added_dist = residue*min(price, prices[v]) + (w-residue)*prices[v];
+            
+            if (dist[u] + added_dist >= dist[v]) continue;
+            if (w > c) continue;
+
+            dist[v] = dist[u] + added_dist;
+            parent[v] = u;
+            pq.push({dist[v], v, min(price, prices[v]), c-w});
+        }
+    }
+}
+
+int main() {
+    cin >> n >> m;
+
+    prices = vi(n);
+    for (int& p: prices) cin >> p;
+
+    alist = adjlist(n);
+    
+    int u, v, d;
+    while (m--) {
+        cin >> u >> v >> d;
+
+        alist[u].push_back({v, d});
+        alist[v].push_back({u, d});
+    }
+
+    int q;
+    cin >> q;
+
+    while (q--) {
+        cin >> c >> s >> e;
+        dijkstra();
+
+
+        for (auto i: parent) cout << i << endl;
+
+        int act = e;
+        while (act != parent[act]) {
+            cout << act << " ";
+            act = parent[act];
+        }
+        cout << act << endl;
+
+        cout << endl << dist[e] << endl;
+
+    }
+
+	return 0;
+}
