@@ -5,14 +5,14 @@ struct union_find {
 	vector<int> p, rank, size_of_set;
     int num_sets;
 
-    union_find(int N) { 
+    union_find(int N) {
         p.assign(N, 0); for (int i = 0; i < N; i++) p[i] = i;
         rank.assign(N, 0);
         size_of_set.assign(N, 1);
         num_sets = N;
     }
     int find_set(int i) {
-        return (p[i] == i) ? i : (p[i] = find_set(p[i])); 
+        return (p[i] == i) ? i : (p[i] = find_set(p[i]));
     }
     bool same_set(int i, int j) {
         return find_set(i) == find_set(j);
@@ -21,14 +21,14 @@ struct union_find {
         return size_of_set[find_set(i)];
     }
     void union_set(int i, int j) {
-        if (!same_set(i, j)){ 
+        if (!same_set(i, j)){
             int x = find_set(i), y = find_set(j);
             if (rank[x] > rank[y]) swap(x,y);
             p[x] = y;
             if (rank[x] == rank[y]) rank[y]++;
             size_of_set[y] += size_of_set[x];
             num_sets--;
-    }} 
+    }}
 };
 
 typedef double wtype; // change weighttype
@@ -42,7 +42,7 @@ typedef vector<iw> viw;
 typedef vector<int> vi;
 typedef vector<viw> adjlist;
 
-int n, m;  
+int n, m;
 edgelist elist;
 adjlist alist;
 
@@ -80,7 +80,7 @@ wtype prim() { // O(mlogm)
 
     process(0);
 
-    while (!pq.empty() and num_taken < n) { 
+    while (!pq.empty() and num_taken < n) {
         auto [w, u] = pq.top(); pq.pop();
 
         if (taken[u]) continue;
@@ -95,6 +95,8 @@ wtype prim() { // O(mlogm)
 }
 
 int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
 
     return 0;
 }

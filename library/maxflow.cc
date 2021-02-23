@@ -11,13 +11,13 @@ vector<int> p;
 
 void augment(int v, int min_edge, vector<vector<int>> res) {
     if (v == s) {
-        f = min_edge; 
-        return; 
+        f = min_edge;
+        return;
     }
-    else if (p[v] != -1) { 
+    else if (p[v] != -1) {
         augment(p[v], min(min_edge, res[p[v]][v]), res);
-        res[p[v]][v] -= f; res[v][p[v]] += f; 
-    } 
+        res[p[v]][v] -= f; res[v][p[v]] += f;
+    }
 }
 
 int main() {
@@ -34,7 +34,7 @@ int main() {
         f = 0;
         // run BFS, compare with the original BFS shown in Section 4.2.2
         vector<int> dist(n, INF);
-        dist[s] = 0; 
+        dist[s] = 0;
 
         queue<int> q;
         q.push(s);

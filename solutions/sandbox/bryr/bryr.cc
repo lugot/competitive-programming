@@ -1,9 +1,7 @@
-#include <bits/stdc++.h>
-#include <vector>
-
+#include<bits/stdc++.h>
 using namespace std;
 
-typedef int wtype;
+typedef double wtype; // change weighttype
 
 typedef pair<int, wtype> iw;
 typedef pair<wtype, int> wi;
@@ -15,6 +13,7 @@ int n, m;
 adjlist alist;
 vi visited;
 vi parent;
+vi restack;
 vi dist;
 int INF = 1e9;
 
@@ -49,5 +48,27 @@ int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0);
 
-	return 0;
+    cin >> n >> m;
+
+    alist = adjlist(n);
+    while (m--) {
+        int a, b, c;
+
+        cin >> a >> b >> c;
+        a--; b--;
+
+        if (c == 1) c = 10000;
+        if (c == 0) c = 1;
+
+        alist[a].push_back({b, c});
+        alist[b].push_back({a, c});
+    }
+
+    dijkstra(0);
+
+    //int ans = dist[n-1] / 10000;
+    cout << dist[n-1] / 10000 << endl;
+
+
+    return 0;
 }

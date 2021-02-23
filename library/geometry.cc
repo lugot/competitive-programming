@@ -64,7 +64,7 @@ double angle(point a, point b, point c) { // angle aBc
 
     return acos(dot(ba, bc) / sqrt(dot(ba,ba)*dot(bc,bc)));
 }
-ostream& operator<<(ostream& os, point &p) { 
+ostream& operator<<(ostream& os, point &p) {
 	os << "(" << p.x << "," << p.y << ")";
 	return os;
 }
@@ -113,7 +113,7 @@ double dist_to_line(point a, point p1, point p2, point &r) {
 	point v = p2-p1;
 	v.normalize();
 	double u = dot(a-p1, v);
-	
+
 	r = p1 + v*u;
 	return dist(a, r);
 }
@@ -223,7 +223,7 @@ vector<point> chull(vector<point> &v) {
     return H;
 }
 
-int main(){
+int main() {
 	ios::sync_with_stdio(0);
 	cin.tie(0);
 
