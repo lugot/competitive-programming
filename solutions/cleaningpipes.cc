@@ -33,6 +33,10 @@ struct point {
 		point r; r.x=x*sc; r.y=y*sc;
 		return r;
 	}
+	bool operator==(point a) {
+		if (abs(a.x - x) < EPS and abs(a.y - y) < EPS) return true;
+		return false;
+	}
 };
 double cross(point a, point b) {
     return a.x*b.y - a.y*b.x;
@@ -40,7 +44,7 @@ double cross(point a, point b) {
 bool ccw(point a, point b, point c) {
     return cross(b-a, c-a) > EPS;
 }
-ostream& operator<<(ostream& os, point &p) { 
+ostream& operator<<(ostream& os, point &p) {
 	os << "(" << p.x << "," << p.y << ")";
 	return os;
 }
@@ -88,7 +92,8 @@ vector<vector<int>> alist;
 vector<int> color;
 
 bool bfs(int x) {
-	color = vector<int>(n, -1);
+	//color = vector<int>(n, -1);
+	//for (int& x: color) x = -1;
 
     queue<int> q;
     q.push(x);
@@ -113,7 +118,7 @@ bool bfs(int x) {
 }
 
 
-int main(){
+int main() {
 	int w, p;
 	cin >> w >> p;
 
@@ -134,20 +139,27 @@ int main(){
 
 	for (int i=0; i<p; i++) {
 		for (int j=i+1; j<p; j++) {
-			if (!are_intersect(segs[i], segs[j])) continue;
+			if (!are_intersect(segs[i], segs[j]) and
+					!(segs[i].b == segs[j].b)) continue;
 
-			point intersect;
-			lines_intersection(line(segs[i].a, segs[i].b),
-							   line(segs[j].a, segs[j].b),
-							   intersect);
+			//point intersect;
+			//lines_intersection(line(segs[i].a, segs[i].b),
+							   //line(segs[j].a, segs[j].b),
+							   //intersect);
 
 			alist[i].push_back(j);
 			alist[j].push_back(i);
 		}
 	}
 
-	if (bfs(0)) cout << "possible" << endl;
-	else 		cout << "impossible" << endl;
+	color = vector<int>(n, -1);
+	bool ans = true;
+	for (int x=0; x<p; x++) {
+		ans &= bfs(x);
+		if (ans == false) break;
+	}
+	if (ans) cout << "possible" << endl;
+	else 	 cout << "impossible" << endl;
 
 
 	return 0;
