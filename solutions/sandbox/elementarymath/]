@@ -1,0 +1,184 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+typedef double wtype; // change weighttype
+
+typedef pair<int, wtype> iw;
+typedef pair<wtype, int> wi;
+typedef vector<iw> viw;
+typedef vector<int> vi;
+typedef vector<viw> adjlist;
+
+typedef pair<int, int> ii;
+typedef vector<ii> vii;
+
+int n, m;
+adjlist alist;
+vi visited;
+vi parent;
+vi restack;
+vi dist;
+
+// TOPOSORTING
+bool cycle;
+vi ts;
+
+bool toposort_cycledetection(int x) {
+    if (cycle) return true;
+    visited[x] = 1;
+
+    for (auto [u, w] : alist[x]) {
+        if (visited[u] == 0) toposort_cycledetection(u);
+        if (visited[u] == 1) {
+            cycle = true;
+            return true;
+        }
+    }
+    ts.push_back(x);
+    visited[x] = 2;
+    return false;
+    /*
+     *in main:
+     *reverse(ts.begin(), ts.end());
+     */
+}
+void toposort(int x) {
+    visited[x] = 1;
+
+    for (auto [u, w] : alist[x]) {
+        if (visited[u]) continue;
+
+        toposort(u);
+    }
+    ts.push_back(x);
+    /*
+     *in main:
+     *reverse(ts.begin(), ts.end());
+     */
+}
+void toposorting_khan() {
+
+    vi deg(n, 0);
+
+    for (int u=0; u<n; u++) deg[u] = alist[u].size();
+    queue<int> q;
+
+    for (int u=0; u<n; u++) {
+        if (deg[u] > 0) continue;
+
+        visited[u] = 1;
+        ts.push_back(u);
+        q.push(u);
+    }
+
+    while (!q.empty()) {
+        int u = q.front(); q.pop();
+
+        for (auto [v, w]: alist[u]) {
+            if (visited[v]) continue;
+
+            deg[v]--;
+            if (deg[v] > 0) continue;
+
+            visited[u] = 1;
+            ts.push_back(v);
+            q.push(v);
+        }
+    }
+}
+
+int idx = 0;
+map<int, vector<ii>> res2pair;
+map<int, int> res2node;
+map<int, int> node2res;
+vii pairs;
+
+int opsthatgivesthatres(int res, ii operands) {
+    auto [a, b] = operands;
+
+    if (a+b == res) return 0;
+    if (a-b == res) return 1;
+    return 2;
+}
+
+int main() {
+	ios::sync_with_stdio(0);
+	cin.tie(0);
+
+    int N;
+    cin >> N;
+
+    while (N--) {
+        int a, b;
+        cin >> a >> b;
+
+        pairs.push_back({a, b});
+    }
+
+
+    for (auto [a, b]: pairs) {
+        if (res2pair.count(a+b) == 0) {
+            res2node[a+b] = idx;
+            node2res[idx++] = a+b;
+        }
+        res2pair[a+b].push_back({a, b});
+
+        if (res2pair.count(a-b) == 0) {
+            res2node[a-b] = idx;
+            node2res[idx++] = a-b;
+        }
+        res2pair[a-b].push_back({a, b});
+
+        if (res2pair.count(a*b) == 0) {
+            res2node[a*b] = idx;
+            node2res[idx++] = a*b;
+        }
+        res2pair[a*b].push_back({a, b});
+    }
+
+    n = res2pair.size();
+
+    alist = adjlist(n);
+    vi seeds;
+    for (auto [res, operands]: res2pair) {
+        if (operands.size() == 1) {
+
+            seeds.push_back(res2node[res]);
+
+            auto [a, b] = operands[0];
+
+            int ops = opsthatgivesthatres(res, operands[0]);
+
+            if (ops == 0) {
+                if (res2pair[a-b].size() != 1) alist[res2node[res]].push_back({res2node[a-b], 1});
+                if (res2pair[a*b].size() != 1) alist[res2node[res]].push_back({res2node[a*b], 1});
+            }
+            if (ops == 1) {
+                if (res2pair[a+b].size() != 1) alist[res2node[res]].push_back({res2node[a+b], 1});
+                if (res2pair[a*b].size() != 1) alist[res2node[res]].push_back({res2node[a*b], 1});
+            }
+            if (ops == 2) {
+                if (res2pair[a+b].size() != 1) alist[res2node[res]].push_back({res2node[a+b], 1});
+                if (res2pair[a-b].size() != 1) alist[res2node[res]].push_back({res2node[a-b], 1});
+            }
+        }
+    }
+
+    bool possible = true;
+    visited = vi(n, 0);
+    cycle = false;
+    for (int seed: seeds) {
+        //cout << possible << " " << seed << endl;
+        possible &= !toposort_cycledetection(seed);
+    }
+
+    if (!possible) {
+        cout << "impossible" << endl;
+        return 0;
+    }
+
+    for (int x: ts) cout << res2node[x]<< endl;
+
+
+    return 0;
+}

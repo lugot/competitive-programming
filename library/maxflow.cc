@@ -1,64 +1,74 @@
 #include <bits/stdc++.h>
-#include <vector>
 
 using namespace std;
+typedef long long ll;
 
-#define INF 1e9
-int n;
+ll n;
+vector<vector<ll>> capacity;
+vector<vector<ll>> adj;
+ll INF = 1e9;
 
-int mf, f, s, t;
-vector<int> p;
+ll bfs(ll s, ll t, vector<ll>& parent) {
+    fill(parent.begin(), parent.end(), -1);
+    parent[s] = -2;
+    queue<pair<ll, ll>> q;
+    q.push({s, INF});
 
-void augment(int v, int min_edge, vector<vector<int>> res) {
-    if (v == s) {
-        f = min_edge;
-        return;
+    while (!q.empty()) {
+        ll cur = q.front().first;
+        ll flow = q.front().second;
+        q.pop();
+
+        for (ll next : adj[cur]) {
+            if (parent[next] == -1 && capacity[cur][next]) {
+                parent[next] = cur;
+                ll new_flow = min(flow, capacity[cur][next]);
+                if (next == t)
+                    return new_flow;
+                q.push({next, new_flow});
+            }
+        }
     }
-    else if (p[v] != -1) {
-        augment(p[v], min(min_edge, res[p[v]][v]), res);
-        res[p[v]][v] -= f; res[v][p[v]] += f;
+
+    return 0;
+}
+
+ll maxflow(ll s, ll t) {
+    ll flow = 0;
+    vector<ll> parent(n);
+    ll new_flow;
+
+    while ((new_flow = bfs(s, t, parent))) {
+        flow += new_flow;
+        ll cur = t;
+        while (cur != s) {
+            ll prev = parent[cur];
+            capacity[prev][cur] -= new_flow;
+            capacity[cur][prev] += new_flow;
+            cur = prev;
+        }
     }
+
+    return flow;
 }
 
 int main() {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
 
-    // inside int main(): set up ‘res’, ‘s’, and ‘t’ with appropriate values
-    int n;
-    vector<vector<int>> res; // to initialize
+    ll m;
+    cin >> n >> m;
 
-    mf = 0;
-    while (1) {
+    capacity = vector<vector<ll>>(n, vector<ll>(n, 0));
+    adj = vector<vector<ll>>(n, vector<ll>());
 
-        f = 0;
-        // run BFS, compare with the original BFS shown in Section 4.2.2
-        vector<int> dist(n, INF);
-        dist[s] = 0;
-
-        queue<int> q;
-        q.push(s);
-        p.assign(n, -1);
-         // record the BFS spanning tree, from s to t!
-        while (!q.empty()) {
-            int u = q.front(); q.pop();
-            if (u == t) break; // immediately stop BFS if we already reach sink t
-
-            for (int v=0; v<n; v++) {
-                 // note: this part is slow
-                if (res[u][v] > 0 && dist[v] == INF) {
-                    dist[v] = dist[u] + 1;
-                    q.push(v);
-                    p[v] = u;
-                }
-            }
-        }
-        augment(t, INF, res);
-        if (f == 0) break;
-        mf += f;
+    ll u, v, c;
+    while (cin >> u >> v >> c) {
+        adj[u-1].push_back(v-1);
+        capacity[u-1][v-1] += c;
     }
 
-    printf("%d\n", mf);
+    ll flow = maxflow(0, n-1);
+    cout << flow << endl;
+
 
 	return 0;
 }

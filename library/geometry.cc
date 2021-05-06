@@ -117,6 +117,11 @@ double dist_to_line(point a, point p1, point p2, point &r) {
 	r = p1 + v*u;
 	return dist(a, r);
 }
+void lines_intersection(line l1, line l2, point& r) {
+	double det = l1.a*l2.b - l2.a*l1.b;
+	r.x = -(l2.b*l1.c - l1.b*l2.c)/det;
+	r.y = -(l1.a*l2.c - l2.a*l1.c)/det;
+}
 
 struct seg {
     point a, b;
